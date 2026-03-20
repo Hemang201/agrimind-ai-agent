@@ -1,4 +1,8 @@
 from fastapi import FastAPI
+from fastapi import File, UploadFile
+from PIL import Image
+import io
+from backend.services.diagnosis_service import analyze_plant_image
 from backend.services.weather_service import get_weather
 from backend.services.watering_service import calculate_watering
 from backend.services.plant_service import (
@@ -86,6 +90,19 @@ def watering(city: str):
         "watering_plan": result
     }
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+@app.post("/plant/{name}/diagnose")
+async def diagnose_plant(name: str, file: UploadFile = File(...)):
+    plant = get_plant(name)
+    if not plant:
+        return {"error": "Plant not found"}
+    contents = await file.read()
+    image = Image.open(io.BytesIO(contents))
+    result = analyze_plant_image(image)
+    if not file.content_type.startswith("image/"):
+        return {"error": "Invalid file type"}
+    # Log diagnosis
+    log_action(name, "diagnosis", result)
+    return {
+        "plant": name,
+        "diagnosis": result
+    }
