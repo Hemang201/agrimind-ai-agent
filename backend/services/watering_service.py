@@ -1,6 +1,5 @@
 def calculate_watering(temperature: float, humidity: float, rain: float):
     base_water_liters = 1.0
-
     reason = []
 
     # Temperature logic
