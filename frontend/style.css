@@ -1,0 +1,25 @@
+body {
+    font-family: Arial;
+    margin: 20px;
+}
+
+h1 {
+    color: green;
+}
+
+#plant-form input {
+    margin: 5px;
+    padding: 8px;
+}
+
+button {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.plant-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+}

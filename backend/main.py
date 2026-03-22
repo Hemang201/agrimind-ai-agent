@@ -133,8 +133,7 @@ def plant_analytics(name: str):
         return {"error": "Weather unavailable"}
     health = calculate_health_score(plant_data)
     alerts = generate_alerts(plant_data, weather)
-    return 
-    {
+    return {
         "plant": name,
         "health": health,
         "alerts": alerts,
