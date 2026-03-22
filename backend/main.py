@@ -1,12 +1,15 @@
 from fastapi import FastAPI
-from fastapi import FastAPI, File, UploadFile, Body
+from fastapi import FastAPI, File, UploadFile, Body, Form
 from PIL import Image
 import io
+import os
 from backend.services.diagnosis_service import analyze_plant_image
 from backend.services.weather_service import get_weather
 from backend.services.watering_service import calculate_watering
 from backend.services.health_service import calculate_health_score
 from backend.services.alert_service import generate_alerts
+from backend.services.ai_service import generate_ai_response
+from dotenv import load_dotenv
 from backend.services.plant_service import (
     create_plant,
     get_plant,
@@ -17,6 +20,9 @@ from backend.services.plant_service import (
 app = FastAPI()
 from fastapi.middleware.cors import CORSMiddleware
 
+token = os.getenv("HF_TOKEN")
+print("TOKEN:", token)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,6 +30,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+load_dotenv()
 
 @app.get("/")
 def root():
@@ -47,6 +55,19 @@ def get_single_plant(name: str):
     if not plant:
         return {"error": "Plant not found"}
     return plant.to_dict()
+
+@app.get("/plant/{name}/ai")
+def ai_insights(name: str):
+    plant = get_plant(name)
+    if not plant:
+        return {"error": "Plant not found"}
+    plant_data = plant.to_dict()
+    weather = get_weather(plant.city)
+    response = generate_ai_response(plant_data, weather)
+    return {
+        "plant": name,
+        "ai_advice": response
+    }
 
 # Update growth stage
 @app.put("/plant/{name}/growth")
@@ -106,21 +127,13 @@ def watering(city: str):
     }
 
 @app.post("/plant/{name}/diagnose")
-async def diagnose_plant(name: str, file: UploadFile = File(...)):
+def diagnose_plant(name: str, file: UploadFile = File(...)):
     plant = get_plant(name)
     if not plant:
         return {"error": "Plant not found"}
-    contents = await file.read()
-    image = Image.open(io.BytesIO(contents))
-    result = analyze_plant_image(image)
-    if not file.content_type.startswith("image/"):
-        return {"error": "Invalid file type"}
-    # Log diagnosis
-    log_action(name, "diagnosis", result)
-    return {
-        "plant": name,
-        "diagnosis": result
-    }
+    plant_type = plant.plant_type
+    location = plant.city
+    return analyze_plant_image(file.file, plant_type, location)
 
 @app.get("/plant/{name}/analytics")
 def plant_analytics(name: str):

@@ -17,3 +17,13 @@
 
 ## Status
 Backend initialized
+
+## Ollama Setup (Required for AI)
+
+1. Install Ollama:
+   https://ollama.com
+
+2. Run:
+   ollama run llama3
+
+3. Keep it running before starting backend
