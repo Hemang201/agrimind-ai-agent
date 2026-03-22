@@ -9,11 +9,19 @@
 
     <h1>AgriMind Dashboard</h1>
 
-    <div id="plant-form">
+    <div class="section">
+        <h2>Add Plant</h2>
         <input type="text" id="name" placeholder="Plant Name">
         <input type="text" id="type" placeholder="Plant Type">
         <input type="text" id="city" placeholder="City">
         <button onclick="addPlant()">Add Plant</button>
+    </div>
+
+    <div class="section">
+        <h2>Diagnose Plant</h2>
+        <input type="text" id="diagnose-name" placeholder="Plant Name">
+        <input type="file" id="image-file">
+        <button onclick="diagnosePlant()">Upload & Diagnose</button>
     </div>
 
     <h2>Your Plants</h2>
