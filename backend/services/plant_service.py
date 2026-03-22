@@ -8,8 +8,6 @@ def create_plant(name: str, plant_type: str, city: str):
     plant = Plant(name, plant_type, city)
     plants_db[name] = plant
     return plant
-    if name in plants_db:
-        return plants_db[name]
 
 def get_plant(name: str):
     return plants_db.get(name)
