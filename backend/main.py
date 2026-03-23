@@ -3,6 +3,7 @@ from fastapi import FastAPI, File, UploadFile, Body, Form
 from PIL import Image
 import io
 import os
+import requests
 from backend.services.diagnosis_service import analyze_plant_image
 from backend.services.weather_service import get_weather
 from backend.services.watering_service import calculate_watering
@@ -10,6 +11,7 @@ from backend.services.health_service import calculate_health_score
 from backend.services.alert_service import generate_alerts
 from backend.services.ai_service import generate_ai_response
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 from backend.services.plant_service import (
     create_plant,
     get_plant,
@@ -143,19 +145,50 @@ def plant_analytics(name: str):
     plant_data = plant.to_dict()
     weather = get_weather(plant.city)
     if not weather:
-        return {"error": "Weather unavailable"}
+        weather = {
+            "temperature": 0,
+            "humidity": 0,
+            "description": "unknown"
+        }
     health = calculate_health_score(plant_data)
     alerts = generate_alerts(plant_data, weather)
+    prompt = f"""
+    You are an expert plant care assistant.
+    Plant: {plant.plant_type}
+    Location: {plant.city}
+    Weather:
+    Temperature: {weather['temperature']}°C
+    Humidity: {weather['humidity']}%
+    Condition: {weather['description']}
+    Logs: {plant_data['logs']}
+    Growth Stage: {plant_data['growth_stage']}
+    Health Score: {health}
+    Provide:
+    1. Health explanation
+    2. Watering advice
+    3. Risks
+    4. Recommendations
+    """
+    ai_output = "AI not available"
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "llama3",
+                "prompt": prompt,
+                "stream": False
+            }
+        )
+        ai_output = response.json().get("response", "No AI response")
+    except Exception as e:
+        print("AI ERROR:", e)
     return {
         "plant": name,
         "health": health,
         "alerts": alerts,
         "weather": weather,
-        "explanation": "Health score is based on logs, diagnosis, and environmental conditions."
+        "ai_insights": ai_output
     }
-    if not plant_data["logs"]:
-        alerts.append("No data available — using default assumptions")
-
 @app.get("/dashboard")
 def dashboard():
     plants = get_all_plants()

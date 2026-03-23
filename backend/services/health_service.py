@@ -2,14 +2,14 @@ def calculate_health_score(plant: dict):
     score = 100
     reasons = []
     logs = plant.get("logs", [])
-    # Check last watering
-    water_logs = [log for log in logs if log["action"] == "watering"]
 
+    # Watering check
+    water_logs = [log for log in logs if log["action"] == "watering"]
     if not water_logs:
         score -= 20
         reasons.append("No watering history found")
 
-    # Check diagnosis logs
+    # Diagnosis check
     diagnosis_logs = [log for log in logs if log["action"] == "diagnosis"]
     if diagnosis_logs:
         latest = diagnosis_logs[-1]["data"]
@@ -26,8 +26,17 @@ def calculate_health_score(plant: dict):
         score += 5
     elif stage == "flowering":
         score += 10
+
     score = max(0, min(score, 100))
+    if score > 80:
+        status = "Healthy"
+    elif score > 50:
+        status = "Moderate"
+    else:
+        status = "Needs Attention"
+
     return {
-        "health_score": score,
+        "score": score,
+        "status": status,
         "reasons": reasons
     }

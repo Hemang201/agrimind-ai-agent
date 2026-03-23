@@ -59,10 +59,8 @@ def analyze_plant_image(file, plant_type, location):
             weather=weather
         )
         return {
-            "plant": plant_type,
-            "location": location,
-            "analysis": desc,
-            "ai_diagnosis": ai_response
+            "disease": desc,    
+            "ai_advice": ai_response 
         }
     except Exception as e:
         return {"error": str(e)}
