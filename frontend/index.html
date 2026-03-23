@@ -6,10 +6,12 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>AgriMind Dashboard</h1>
-
+    <div style="background:#2e7d32;color:white;padding:10px;">
+        <h2 id="site-title">AgriMind Dashboard</h2>
+        <h3 id="site-subtitle">Intelligent Crop Care</h3>
+    </div>
     <div class="section">
-        <h2>Add Plant</h2>
+        <h4 id="add-plant-heading">Add Plant</h4>
         <input type="text" id="name" placeholder="Plant Name">
         <input type="text" id="type" placeholder="Plant Type">
         <input type="text" id="city" placeholder="City">
@@ -17,22 +19,46 @@
     </div>
 
     <div class="section">
-    <h2>Voice Assistant</h2>
-    <button onclick="startVoice()">Start Voice Command</button>
+        <h4 id="talk-ai-heading">Talk to AI</h4>
+        <input type="text" id="ai-question" placeholder="Ask any plant care question" style="width: 70%; margin: 5px 0;" />
+        <button id="talk-ai-btn" onclick="askAI()">Talk to AI</button>
+        <div id="ai-chat-result" class="plant-card" style="margin-top: 10px; padding: 10px; min-height: 80px;"></div>
     </div>
 
     <div class="section">
-        <h2>Diagnose Plant</h2>
+        <h4 id="diagnose-heading">Diagnose Plant</h4>
         <input type="text" id="diagnose-name" placeholder="Plant Name">
         <input type="file" id="image-file">
         <button onclick="diagnosePlant()">Upload & Diagnose</button>
     </div>
     <div class="section">
-        <h2>Diagnosis Result</h2>
+        <h4 id="diagnosis-result-heading">Diagnosis Result</h4>
         <div id="diagnosis-result" class="plant-card"></div>
     </div>
 
-    <h2>Your Plants</h2>
+    <div class="section">
+        <h4 id="recommend-heading">Recommended Crops</h4>
+        <input type="text" id="recommend-city" placeholder="City" style="margin:5px;width:120px;" />
+        <label for="recommend-season" id="recommend-season-label" style="margin-left:8px;">Season</label>
+        <select id="recommend-season" style="margin:5px;width:130px;">
+            <option value="">Auto season</option>
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="autumn">Autumn</option>
+            <option value="winter">Winter</option>
+        </select>
+        <label for="recommend-type" id="recommend-type-label" style="margin-left:8px;">Type</label>
+        <select id="recommend-type" style="margin:5px;width:150px;">
+            <option value="">All types</option>
+            <option value="vegetables">Vegetables</option>
+            <option value="flowers">Flowers</option>
+            <option value="cashcrops">Cashcrops</option>
+        </select>
+        <button id="recommend-btn" onclick="getRecommendation()">Get Recommendation</button>
+        <div id="recommendation-result" class="plant-card" style="margin-top:10px;"></div>
+    </div>
+
+    <h4 id="your-plants-heading">Your Plants</h4>
     <div id="plants-container"></div>
 
     <script src="script.js"></script>

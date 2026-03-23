@@ -1,0 +1,39 @@
+{
+    "Tomato": {
+        "name": "Tomato",
+        "plant_type": "Tomato",
+        "city": "Delhi",
+        "created_at": "2026-03-23T17:17:56.527282",
+        "growth_stage": "seed",
+        "logs": [
+            {
+                "timestamp": "2026-03-23T17:18:16.577969",
+                "action": "watering",
+                "data": {
+                    "amount": 0.7,
+                    "unit": "liters",
+                    "weather": {
+                        "temperature": 23.05,
+                        "humidity": 64,
+                        "rain": 0,
+                        "description": "haze"
+                    },
+                    "plan": {
+                        "recommended_water_liters": 1.0,
+                        "reason": [
+                            "Morderate temperature detected"
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "Neem": {
+        "name": "Neem",
+        "plant_type": "Neem",
+        "city": "Delhi",
+        "created_at": "2026-03-23T17:17:56.527282",
+        "growth_stage": "seed",
+        "logs": []
+    }
+}

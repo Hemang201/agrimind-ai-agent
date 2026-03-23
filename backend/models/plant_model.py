@@ -8,7 +8,7 @@ class Plant:
         self.city = city
         self.created_at = datetime.utcnow().isoformat()
         self.logs: List[Dict] = []
-        self.growth_stage = "seed"
+        self.growth_stage = "germination"
 
     def add_log(self, action: str, data: Dict):
         self.logs.append({

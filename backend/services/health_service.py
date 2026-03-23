@@ -20,12 +20,18 @@ def calculate_health_score(plant: dict):
 
     # Growth stage impact
     stage = plant.get("growth_stage")
-    if stage == "seed":
+    if stage == "germination":
         score -= 5
+    elif stage == "seedling":
+        score += 0
     elif stage == "vegetative":
         score += 5
     elif stage == "flowering":
         score += 10
+    elif stage == "mature":
+        score += 8
+    elif stage == "harvest":
+        score += 3
 
     score = max(0, min(score, 100))
     if score > 80:
@@ -37,6 +43,7 @@ def calculate_health_score(plant: dict):
 
     return {
         "score": score,
+        "health_score": score,
         "status": status,
         "reasons": reasons
     }
