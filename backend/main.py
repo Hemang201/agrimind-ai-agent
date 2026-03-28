@@ -11,6 +11,7 @@ from backend.services.health_service import calculate_health_score
 from backend.services.alert_service import generate_alerts
 from backend.services.ai_service import generate_ai_response, chat_with_ai
 from backend.services.recommendation_service import recommend_crops
+from backend.services.soil_service import lookup_preset_soil
 from backend.utils.storage import save_ai_chat
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,8 +44,8 @@ def root():
 
 # Create plant
 @app.post("/plant")
-def add_plant(name: str, plant_type: str, city: str):
-    plant = create_plant(name, plant_type, city)
+def add_plant(name: str, plant_type: str, city: str, soil_type: str = "", soil_minerals: str = ""):
+    plant = create_plant(name, plant_type, city, soil_type, soil_minerals)
     return plant.to_dict()
 
 # Get all plants
@@ -98,11 +99,11 @@ def talk_to_ai(payload: dict = Body(...)):
     return {"question": question, "answer": answer}
 
 @app.get("/recommend")
-def recommend(city: str, season: str = None, plant_type: str = None):
+def recommend(city: str, season: str = None, plant_type: str = None, soil_type: str = None, soil_minerals: str = None):
     weather = get_weather(city)
     if not weather:
         return {"error": "Weather unavailable; verify city"}
-    return recommend_crops(city, weather, season, plant_type)
+    return recommend_crops(city, weather, season, plant_type, soil_type)
 
 # Update growth stage
 @app.put("/plant/{name}/growth")
@@ -202,7 +203,8 @@ def diagnose(name: str, lang: str = "en", file: UploadFile = File(...)):
         return {"error": "Plant not found"}
     plant_type = plant.plant_type
     location = plant.city
-    result = analyze_plant_image(file.file, plant_type, location, lang=lang, logs=plant.logs)
+    soil_info = f"Type: {getattr(plant, 'soil_type', 'Unknown')}, Minerals: {getattr(plant, 'soil_minerals', 'Unknown')}"
+    result = analyze_plant_image(file.file, plant_type, location, lang=lang, logs=plant.logs, soil_info=soil_info)
     if "error" not in result:
         log_action(name, "diagnosis", {
             "issue": result.get("disease", "Unknown"),
@@ -231,6 +233,8 @@ def plant_analytics(name: str, lang: str = "en"):
     You are an expert plant care assistant.
     Plant: {plant.plant_type}
     Location: {plant.city}
+    Soil Type: {plant_data.get('soil_type', 'Unknown')}
+    Mineral Content: {plant_data.get('soil_minerals', 'Unknown')}
     Weather:
     Temperature: {weather['temperature']}°C
     Humidity: {weather['humidity']}%
@@ -297,3 +301,7 @@ def log_water(name: str, data: dict):
     })
 
     return {"message": "Water logged"}
+
+@app.get("/preset-soil/{city}")
+def get_preset_soil(city: str):
+    return lookup_preset_soil(city)

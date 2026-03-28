@@ -30,6 +30,12 @@ WEATHER_BASED_ADJUSTMENTS = {
     "dry": ["Cactus", "Millet", "Sorrel"]
 }
 
+SOIL_BASED_ADJUSTMENTS = {
+    "sandy": ["Carrot", "Potato", "Radish"],
+    "clay": ["Broccoli", "Cabbage", "Aster"],
+    "loamy": ["Tomato", "Wheat", "Sugarcane"]
+}
+
 
 def get_season_from_month(month: int):
     if month in [12, 1, 2]:
@@ -42,7 +48,7 @@ def get_season_from_month(month: int):
         return "autumn"
 
 
-def recommend_crops(city: str, weather: dict, season: str = None, plant_type: str = None):
+def recommend_crops(city: str, weather: dict, season: str = None, plant_type: str = None, soil_type: str = None):
     if not season:
         season = get_season_from_month(datetime.utcnow().month)
 
@@ -69,6 +75,15 @@ def recommend_crops(city: str, weather: dict, season: str = None, plant_type: st
             recommended.extend(WEATHER_BASED_ADJUSTMENTS["humid"])
         elif humidity < 40:
             recommended.extend(WEATHER_BASED_ADJUSTMENTS["dry"])
+
+    if soil_type:
+        st = soil_type.lower()
+        if "sand" in st:
+            recommended.extend(SOIL_BASED_ADJUSTMENTS["sandy"])
+        elif "clay" in st:
+            recommended.extend(SOIL_BASED_ADJUSTMENTS["clay"])
+        elif "loam" in st:
+            recommended.extend(SOIL_BASED_ADJUSTMENTS["loamy"])
 
     # De-duplicate and maintain order
     seen = set()

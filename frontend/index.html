@@ -1,66 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>AgriMind Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>AgriMinds Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- CSS -->
+<link rel="stylesheet" href="style.css">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/your-kit.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div style="background:#2e7d32;color:white;padding:10px;">
-        <h2 id="site-title">AgriMind Dashboard</h2>
-        <h3 id="site-subtitle">Intelligent Crop Care</h3>
+<header class="hero">
+  <nav class="navbar glass">
+    <div class="logo">🌱 Agri माइंड्स</div>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">How it Works</a></li>
+      <li><a href="#" onclick="event.preventDefault(); toggleUserDashboard()">Dashboard</a></li>
+      <li><a href="#" onclick="event.preventDefault(); scrollToFeaturesSection();" class="btn">Get Started</a></li>
+    </ul>
+  </nav>
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>Smart AI for <br> Intelligent<span class="crop-care"> Crop Care</span></h1>
+      <p>Manage your plants, diagnose diseases, and get AI-powered crop recommendations — all in one intelligent dashboard.</p>
+      <div class="hero-buttons">
+        <button onclick="scrollToFeaturesSection()" class="primary-btn">Get Started</button>
+        <button onclick="toggleProjectInfo()" class="secondary-btn">Learn More</button>
+      </div>
     </div>
-    <div class="section">
-        <h4 id="add-plant-heading">Add Plant</h4>
-        <input type="text" id="name" placeholder="Plant Name">
-        <input type="text" id="type" placeholder="Plant Type">
-        <input type="text" id="city" placeholder="City">
-        <button onclick="addPlant()">Add Plant</button>
+    <div class="hero-image">
+      <img src="https://i.ibb.co/s9PFvMmM/b071e1da64ded30817d2114364848f82.jpg" alt="Hero Image">
     </div>
+  </div>
+</header>
 
-    <div class="section">
-        <h4 id="talk-ai-heading">Talk to AI</h4>
-        <input type="text" id="ai-question" placeholder="Ask any plant care question" style="width: 70%; margin: 5px 0;" />
-        <button id="talk-ai-btn" onclick="askAI()">Talk to AI</button>
-        <div id="ai-chat-result" class="plant-card" style="margin-top: 10px; padding: 10px; min-height: 80px;"></div>
+<section class="intro" id="dashboard">
+  <div class="intro-left">
+    <span id="introTag" class="tag">AI Powered Agriculture</span>
+    <h2 id="introTitle">Your Digital Assistant for <br> Smarter Farming</h2>
+    <p id="introText">AgriMind Dashboard combines artificial intelligence with real-time insights to help farmers and plant enthusiasts monitor, diagnose, and optimize plant growth effortlessly.</p>
+  </div>
+  <div class="intro-right">
+    <div class="feature-card" onclick="toggleAddPlantForm()" style="cursor: pointer;">
+      <i class="fas fa-seedling"></i>
+      <h4>Add Plants</h4>
+      <p id="card1Desc">Register and track your crops easily.</p>
     </div>
+    <div class="feature-card" onclick="toggleDiagnoseForm()" style="cursor: pointer;">
+      <i class="fas fa-leaf"></i>
+      <h4>Diagnose</h4>
+      <p id="card2Desc">Detect plant diseases from images.</p>
+    </div>
+    <div class="feature-card recommend-card" onclick="toggleRecommendForm()" style="cursor: pointer;">
+      <i class="fas fa-tractor"></i>
+      <h4>Recommendations</h4>
+      <p id="card3Desc">Get best crops based on your region.</p>
+    </div>
+  </div>
+</section>
 
-    <div class="section">
-        <h4 id="diagnose-heading">Diagnose Plant</h4>
-        <input type="text" id="diagnose-name" placeholder="Plant Name">
-        <input type="file" id="image-file">
-        <button onclick="diagnosePlant()">Upload & Diagnose</button>
-    </div>
-    <div class="section">
-        <h4 id="diagnosis-result-heading">Diagnosis Result</h4>
-        <div id="diagnosis-result" class="plant-card"></div>
-    </div>
+<div class="lang-toggle" onclick="toggleLang()">🌐</div>
+<div class="lang-popup" id="langPopup">
+  <div class="lang-option" onclick="setLang('en')"><span>🇺🇸</span> English</div>
+  <div class="lang-option" onclick="setLang('hi')"><span>🇮🇳</span> हिंदी</div>
+</div>
 
-    <div class="section">
-        <h4 id="recommend-heading">Recommended Crops</h4>
-        <input type="text" id="recommend-city" placeholder="City" style="margin:5px;width:120px;" />
-        <label for="recommend-season" id="recommend-season-label" style="margin-left:8px;">Season</label>
-        <select id="recommend-season" style="margin:5px;width:130px;">
+<div id="add" class="content-section" style="display: none;">
+  <h3>Add Plant</h3>
+  <form onsubmit="event.preventDefault(); addPlant();">
+    <label id="plantNameLabel" for="plantName">Plant Name</label>
+    <input type="text" id="plantName" placeholder="e.g. Tomato">
+    <label id="plantTypeLabel" for="plantType">Plant Type</label>
+    <input type="text" id="plantType" placeholder="e.g. Vegetable">
+    <label id="cityLabel" for="plantCity">City</label>
+    <input type="text" id="plantCity" placeholder="e.g. Noida">
+    <button type="button" id="presetBtn1" onclick="fetchPresetSoil('plantCity', 'plantSoilType', 'plantMinerals')" style="margin-bottom: 10px; background: #dda15e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🪄 Use Preset Data</button>
+    <label id="soilTypeLabel" for="plantSoilType">Soil Type</label>
+    <select id="plantSoilType">
+      <option value="Loamy">Loamy</option>
+      <option value="Sandy">Sandy</option>
+      <option value="Clay">Clay</option>
+      <option value="Silt">Silt</option>
+      <option value="Peaty">Peaty</option>
+      <option value="Chalky">Chalky</option>
+    </select>
+    <label id="mineralsLabel">Mineral Content</label>
+    <div style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+      <label id="labelN_1" style="font-size:12px;">Nitrogen (N): <span id="valN_1">50</span>%</label>
+      <input type="range" id="plantN" min="0" max="100" value="50" oninput="document.getElementById('valN_1').innerText = this.value">
+      
+      <label id="labelP_1" style="font-size:12px;">Phosphorus (P): <span id="valP_1">50</span>%</label>
+      <input type="range" id="plantP" min="0" max="100" value="50" oninput="document.getElementById('valP_1').innerText = this.value">
+      
+      <label id="labelK_1" style="font-size:12px;">Potassium (K): <span id="valK_1">50</span>%</label>
+      <input type="range" id="plantK" min="0" max="100" value="50" oninput="document.getElementById('valK_1').innerText = this.value">
+
+      <label id="labelM_1" style="font-size:12px;">Moisture: <span id="valM_1">50</span>%</label>
+      <input type="range" id="plantM" min="0" max="100" value="50" oninput="document.getElementById('valM_1').innerText = this.value">
+    </div>
+    <button id="addPlantBtn" type="submit">Add Plant</button>
+  </form>
+  <p id="plantList"></p>
+</div>
+
+<div id="ai" class="content-section">
+  <h3>AI Assistant</h3>
+  <input type="text" id="aiQuestion" placeholder="Ask any plant care question">
+  <button id="talkAiBtn" onclick="askAI()">Talk to AI</button>
+  <p id="aiResponse" style="margin-top:12px;"></p>
+</div>
+
+<div id="diagnose" class="content-section" style="display: none;">
+  <h3>Diagnose Plant</h3>
+  <label id="diagnosePlantNameLabel">Plant Name</label>
+  <input type="text" id="diagnoseName" placeholder="Plant Name">
+  <input type="file" id="diagnoseFile">
+  <button id="diagnoseBtn" onclick="diagnosePlant()">Upload & Diagnose</button>
+  <p id="diagnosisResult" style="margin-top:12px;"></p>
+</div>
+
+<div id="recommend" class="content-section" style="display: none;">
+  <h3>Recommended Crops</h3>
+  <label id="recommendCityLabel">City</label>
+  <input type="text" id="recommendCity" placeholder="City">
+  <button type="button" id="presetBtn2" onclick="fetchPresetSoil('recommendCity', 'recommendSoilType', 'recommendMinerals')" style="margin-bottom: 10px; background: #dda15e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🪄 Use Preset Data</button>
+  <label id="soilTypeLabel2" for="recommendSoilType">Soil Type</label>
+  <select id="recommendSoilType">
+    <option value="Loamy">Loamy</option>
+    <option value="Sandy">Sandy</option>
+    <option value="Clay">Clay</option>
+    <option value="Silt">Silt</option>
+    <option value="Peaty">Peaty</option>
+    <option value="Chalky">Chalky</option>
+  </select>
+  <label id="mineralsLabel2">Mineral Content</label>
+  <div style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+    <label id="labelN_2" style="font-size:12px;">Nitrogen (N): <span id="valN_2">50</span>%</label>
+    <input type="range" id="recommendN" min="0" max="100" value="50" oninput="document.getElementById('valN_2').innerText = this.value">
+    
+    <label id="labelP_2" style="font-size:12px;">Phosphorus (P): <span id="valP_2">50</span>%</label>
+    <input type="range" id="recommendP" min="0" max="100" value="50" oninput="document.getElementById('valP_2').innerText = this.value">
+    
+    <label id="labelK_2" style="font-size:12px;">Potassium (K): <span id="valK_2">50</span>%</label>
+    <input type="range" id="recommendK" min="0" max="100" value="50" oninput="document.getElementById('valK_2').innerText = this.value">
+
+    <label id="labelM_2" style="font-size:12px;">Moisture: <span id="valM_2">50</span>%</label>
+    <input type="range" id="recommendM" min="0" max="100" value="50" oninput="document.getElementById('valM_2').innerText = this.value">
+  </div>
+  <label id="seasonLabel">Season</label>
+  <select id="recommendSeason">
+    <option value="">Auto season</option>
+    <option value="spring">Spring</option>
+    <option value="summer">Summer</option>
+    <option value="autumn">Autumn</option>
+    <option value="winter">Winter</option>
+  </select>
+  <label id="plantTypeLabel">Plant Type</label>
+  <select id="recommendPlantType">
+    <option value="">All types</option>
+    <option value="vegetables">Vegetables</option>
+    <option value="flowers">Flowers</option>
+    <option value="cashcrops">Cashcrops</option>
+  </select>
+  <button id="recommendBtn" onclick="getRecommendation()">Get Recommendation</button>
+  <p id="resultBox" style="margin-top:15px;"></p>
+</div>
+
+<div class="ai-toggle" onclick="toggleAI()">🌿</div>
+
+<div class="ai-popup" id="aiPopup">
+  <div class="ai-header">
+    <div class="ai-header-left">
+      <img src="https://cdn-icons-png.flaticon.com/512/2909/2909767.png" class="ai-logo">
+      <div><h3>AgriMind Copilot</h3><span style="color:#a8e6cf;">Online</span></div>
+    </div>
+    <span class="close-btn" onclick="toggleAI()">✖</span>
+  </div>
+  <div class="ai-body">
+    <p class="ai-intro">🌱 Ask anything about crops, soil, or plant health.</p>
+    <div class="copilot-wrapper">
+      <div class="copilot-box">
+        <input type="text" id="chatInput" placeholder="Type your question..." />
+      </div>
+      <div class="copilot-side">
+        <button class="tools-btn">⚙</button>
+        <button class="send-btn">➤</button>
+      </div>
+    </div>
+    <div id="chatBox" class="chat-box"></div>
+  </div>
+</div>
+
+<div id="addPlantFormModal" class="modal" onclick="if(event.target.id === 'addPlantFormModal') toggleAddPlantForm()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleAddPlantForm()">✖</span>
+    <div class="modal-body">
+      <h2 id="addPlantFormTitle">🌱 Add Your Plant</h2>
+      <form onsubmit="event.preventDefault(); addPlant(); toggleAddPlantForm();" style="margin-top: 20px;">
+        <div class="form-group">
+          <label id="plantNameLabel" for="addPlantName">Plant Name</label>
+          <input type="text" id="addPlantName" placeholder="e.g. Tomato" required>
+        </div>
+        <div class="form-group">
+          <label id="plantTypeLabel" for="addPlantType">Plant Type</label>
+          <input type="text" id="addPlantType" placeholder="e.g. Vegetable" required>
+        </div>
+        <div class="form-group">
+          <label id="cityLabelModal" for="addPlantCity">City</label>
+          <input type="text" id="addPlantCity" placeholder="e.g. Noida" required>
+          <button type="button" id="presetBtn3" onclick="fetchPresetSoil('addPlantCity', 'addPlantSoilType', 'addPlantMinerals')" style="margin-top: 5px; background: #dda15e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🪄 Use Preset Data</button>
+        </div>
+        <div class="form-group">
+          <label id="soilTypeLabelModal" for="addPlantSoilType">Soil Type</label>
+          <select id="addPlantSoilType">
+            <option value="Loamy">Loamy</option>
+            <option value="Sandy">Sandy</option>
+            <option value="Clay">Clay</option>
+            <option value="Silt">Silt</option>
+            <option value="Peaty">Peaty</option>
+            <option value="Chalky">Chalky</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="mineralsLabelModal">Mineral Content</label>
+          <div style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+            <label id="labelN_3" style="font-size:12px;">Nitrogen (N): <span id="valN_3">50</span>%</label>
+            <input type="range" id="addPlantN" min="0" max="100" value="50" oninput="document.getElementById('valN_3').innerText = this.value">
+            
+            <label id="labelP_3" style="font-size:12px;">Phosphorus (P): <span id="valP_3">50</span>%</label>
+            <input type="range" id="addPlantP" min="0" max="100" value="50" oninput="document.getElementById('valP_3').innerText = this.value">
+            
+            <label id="labelK_3" style="font-size:12px;">Potassium (K): <span id="valK_3">50</span>%</label>
+            <input type="range" id="addPlantK" min="0" max="100" value="50" oninput="document.getElementById('valK_3').innerText = this.value">
+
+            <label id="labelM_3" style="font-size:12px;">Moisture: <span id="valM_3">50</span>%</label>
+            <input type="range" id="addPlantM" min="0" max="100" value="50" oninput="document.getElementById('valM_3').innerText = this.value">
+          </div>
+        </div>
+        <button type="submit" id="addPlantBtnModal" style="width: 100%; padding: 12px; margin-top: 15px; background: #4f772d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">Add Plant</button>
+      </form>
+      <p id="plantListModal" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 14px;"></p>
+    </div>
+  </div>
+</div>
+
+<div id="diagnoseFormModal" class="modal" onclick="if(event.target.id === 'diagnoseFormModal') toggleDiagnoseForm()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleDiagnoseForm()">✖</span>
+    <div class="modal-body">
+      <h2 id="diagnoseFormTitle">🔍 Diagnose Your Plant</h2>
+      <form onsubmit="event.preventDefault(); diagnosePlantModal();" style="margin-top: 20px;">
+        <div class="form-group">
+          <label id="diagnosePlantNameLabel">Plant Name</label>
+          <input type="text" id="diagnoseModalName" placeholder="Enter plant name" required>
+        </div>
+        <div class="form-group">
+          <label>Plant Image</label>
+          <input type="file" id="diagnoseModalFile" accept="image/*" required style="padding: 10px; border: 1px solid #4f772d; border-radius: 6px;">
+        </div>
+        <button type="submit" id="diagnoseBtnModal" style="width: 100%; padding: 12px; margin-top: 15px; background: #4f772d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">Upload & Diagnose</button>
+      </form>
+      <p id="diagnosisResultModal" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 14px;"></p>
+    </div>
+  </div>
+</div>
+
+<div id="recommendFormModal" class="modal" onclick="if(event.target.id === 'recommendFormModal') toggleRecommendForm()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleRecommendForm()">✖</span>
+    <div class="modal-body">
+      <h2 id="recommendFormTitle">🌾 Get Crop Recommendations</h2>
+      <form onsubmit="event.preventDefault(); getRecommendationModal(); toggleRecommendForm();" style="margin-top: 20px;">
+        <div class="form-group">
+          <label id="recommendCityLabelModal">City</label>
+          <input type="text" id="recommendModalCity" placeholder="Enter your city" required>
+          <button type="button" id="presetBtn4" onclick="fetchPresetSoil('recommendModalCity', 'recommendModalSoilType', 'recommendModalMinerals')" style="margin-top: 5px; background: #dda15e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">🪄 Use Preset Data</button>
+        </div>
+        <div class="form-group">
+          <label id="soilTypeLabelModal2">Soil Type</label>
+          <select id="recommendModalSoilType">
+            <option value="Loamy">Loamy</option>
+            <option value="Sandy">Sandy</option>
+            <option value="Clay">Clay</option>
+            <option value="Silt">Silt</option>
+            <option value="Peaty">Peaty</option>
+            <option value="Chalky">Chalky</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="mineralsLabelModal2">Mineral Content</label>
+          <div style="background: rgba(0,0,0,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+            <label id="labelN_4" style="font-size:12px;">Nitrogen (N): <span id="valN_4">50</span>%</label>
+            <input type="range" id="recommendModalN" min="0" max="100" value="50" oninput="document.getElementById('valN_4').innerText = this.value">
+            
+            <label id="labelP_4" style="font-size:12px;">Phosphorus (P): <span id="valP_4">50</span>%</label>
+            <input type="range" id="recommendModalP" min="0" max="100" value="50" oninput="document.getElementById('valP_4').innerText = this.value">
+            
+            <label id="labelK_4" style="font-size:12px;">Potassium (K): <span id="valK_4">50</span>%</label>
+            <input type="range" id="recommendModalK" min="0" max="100" value="50" oninput="document.getElementById('valK_4').innerText = this.value">
+
+            <label id="labelM_4" style="font-size:12px;">Moisture: <span id="valM_4">50</span>%</label>
+            <input type="range" id="recommendModalM" min="0" max="100" value="50" oninput="document.getElementById('valM_4').innerText = this.value">
+          </div>
+        </div>
+        <div class="form-group">
+          <label id="seasonLabel">Season</label>
+          <select id="recommendModalSeason">
             <option value="">Auto season</option>
             <option value="spring">Spring</option>
             <option value="summer">Summer</option>
             <option value="autumn">Autumn</option>
             <option value="winter">Winter</option>
-        </select>
-        <label for="recommend-type" id="recommend-type-label" style="margin-left:8px;">Type</label>
-        <select id="recommend-type" style="margin:5px;width:150px;">
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="plantTypeLabel">Plant Type</label>
+          <select id="recommendModalPlantType">
             <option value="">All types</option>
             <option value="vegetables">Vegetables</option>
             <option value="flowers">Flowers</option>
             <option value="cashcrops">Cashcrops</option>
-        </select>
-        <button id="recommend-btn" onclick="getRecommendation()">Get Recommendation</button>
-        <div id="recommendation-result" class="plant-card" style="margin-top:10px;"></div>
+          </select>
+        </div>
+        <button type="submit" id="recommendBtnModal" style="width: 100%; padding: 12px; margin-top: 15px; background: #4f772d; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px;">Get Recommendations</button>
+      </form>
+      <p id="resultBoxModal" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 14px;"></p>
     </div>
+  </div>
+</div>
 
-    <h4 id="your-plants-heading">Your Plants</h4>
-    <div id="plants-container"></div>
+<div id="projectInfoModal" class="modal" onclick="if(event.target.id === 'projectInfoModal') toggleProjectInfo()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleProjectInfo()">✖</span>
+    <div class="modal-body">
+      <h2>About AgriMinds</h2>
+      <p>
+        <strong>AgriMinds</strong> is an intelligent agricultural dashboard powered by artificial intelligence, designed to help farmers, gardeners, and agricultural enthusiasts monitor, manage, and optimize plant growth effortlessly.
+      </p>
+      <h3>Key Features:</h3>
+      <ul>
+        <li><strong>🌱 Plant Management:</strong> Register and track all your crops with detailed information about plant type and location.</li>
+        <li><strong>🔍 Disease Diagnosis:</strong> Upload images of your plants and let AI identify diseases and health issues in real-time.</li>
+        <li><strong>🌾 Smart Recommendations:</strong> Get personalized crop recommendations based on your region, season, and plant type preferences.</li>
+        <li><strong>💬 AI Assistant:</strong> Chat with our intelligent farming assistant for expert advice on plant care, soil management, and agricultural best practices.</li>
+      </ul>
+      <h3>Technology:</h3>
+      <p>
+        Built with FastAPI backend and a responsive web interface, AgriMinds leverages machine learning models to provide accurate plant diagnostics and recommendations. The platform supports both English and Hindi languages for wider accessibility.
+      </p>
+      <h3>Mission:</h3>
+      <p>
+        We aim to empower farmers with technology-driven insights to increase crop yields, reduce diseases, and promote sustainable agricultural practices.
+      </p>
+    </div>
+  </div>
+</div>
 
-    <script src="script.js"></script>
+<div id="getStartedModal" class="modal" onclick="if(event.target.id === 'getStartedModal') toggleGetStarted()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleGetStarted()">✖</span>
+    <div class="modal-body">
+      <h2>Getting Started with AgriMinds</h2>
+      <p>Welcome to your intelligent farming dashboard! Here's how to get started:</p>
+      <h3>📋 Step 1: Add Your Plants</h3>
+      <p>Start by registering your crops in the system. Enter plant name, type, and location to begin tracking.</p>
+      <h3>🔍 Step 2: Monitor & Diagnose</h3>
+      <p>Upload plant images to our AI system to detect diseases and health issues. Get instant diagnosis and treatment recommendations.</p>
+      <h3>🌾 Step 3: Get Smart Recommendations</h3>
+      <p>Discover the best crops to grow in your region based on season and climate. Make data-driven farming decisions.</p>
+      <h3>💬 Step 4: Chat with AI Assistant</h3>
+      <p>Ask our intelligent farming assistant any questions about plant care, soil management, and agricultural best practices.</p>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+        <button onclick="toggleGetStarted(); scrollToSection('add');" class="primary-btn" style="width: 100%; padding: 12px; cursor: pointer; border: none; border-radius: 8px; background: #4f772d; color: white; font-weight: 600;">Start Adding Plants</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="addPlantsModal" class="modal" onclick="if(event.target.id === 'addPlantsModal') toggleAddPlantsInfo()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleAddPlantsInfo()">✖</span>
+    <div class="modal-body">
+      <h2>🌱 Add Plants</h2>
+      <p>Register and manage your crops in one centralized location.</p>
+      <h3>What You Can Track:</h3>
+      <ul>
+        <li><strong>Plant Name:</strong> Give your plants meaningful names (e.g., "Tomato Patch", "Rose Garden")</li>
+        <li><strong>Plant Type:</strong> Specify the type (vegetables, fruits, flowers, herbs, etc.)</li>
+        <li><strong>Location:</strong> Record the city or region where your plants are growing</li>
+      </ul>
+      <h3>Benefits:</h3>
+      <ul>
+        <li>Keep a complete inventory of all your crops</li>
+        <li>Track plant health over time</li>
+        <li>Receive location-specific care recommendations</li>
+        <li>Monitor multiple plants simultaneously</li>
+      </ul>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+        <button onclick="toggleAddPlantsInfo(); scrollToSection('add');" class="primary-btn" style="width: 100%; padding: 12px; cursor: pointer; border: none; border-radius: 8px; background: #4f772d; color: white; font-weight: 600;">Add Your First Plant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="diagnoseModal" class="modal" onclick="if(event.target.id === 'diagnoseModal') toggleDiagnoseInfo()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleDiagnoseInfo()">✖</span>
+    <div class="modal-body">
+      <h2>🔍 Plant Diagnosis</h2>
+      <p>Use AI-powered image analysis to detect plant diseases and health issues instantly.</p>
+      <h3>How It Works:</h3>
+      <ol>
+        <li>Select the plant name you want to diagnose</li>
+        <li>Upload a clear photo of the affected leaf or plant part</li>
+        <li>Our AI analyzes the image in real-time</li>
+        <li>Receive instant diagnosis with treatment options</li>
+      </ol>
+      <h3>What We Can Detect:</h3>
+      <ul>
+        <li>Fungal diseases (powdery mildew, leaf spot, rust)</li>
+        <li>Bacterial infections</li>
+        <li>Viral diseases</li>
+        <li>Nutrient deficiencies</li>
+        <li>Pest damage</li>
+      </ul>
+      <h3>Tips for Best Results:</h3>
+      <ul>
+        <li>Use good lighting and clear photos</li>
+        <li>Focus on the affected area</li>
+        <li>Include multiple angles if possible</li>
+      </ul>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+        <button onclick="toggleDiagnoseInfo(); scrollToSection('diagnose');" class="primary-btn" style="width: 100%; padding: 12px; cursor: pointer; border: none; border-radius: 8px; background: #4f772d; color: white; font-weight: 600;">Diagnose a Plant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="recommendModal" class="modal" onclick="if(event.target.id === 'recommendModal') toggleRecommendInfo()">
+  <div class="modal-content feature-modal">
+    <span class="close-btn" onclick="toggleRecommendInfo()">✖</span>
+    <div class="modal-body">
+      <h2>🌾 Smart Recommendations</h2>
+      <p>Get personalized crop recommendations based on your location, season, and preferences.</p>
+      <h3>How to Get Recommendations:</h3>
+      <ol>
+        <li>Enter your city or region</li>
+        <li>Select the current season (or let us auto-detect)</li>
+        <li>Choose plant type preference (vegetables, flowers, cash crops, or all)</li>
+        <li>Get AI-powered suggestions tailored to your conditions</li>
+      </ol>
+      <h3>Factors We Consider:</h3>
+      <ul>
+        <li>🌡️ <strong>Climate & Temperature:</strong> Crops suited for your region's climate</li>
+        <li>📅 <strong>Seasonal Timing:</strong> What grows best in the current season</li>
+        <li>💧 <strong>Water Requirements:</strong> Low, moderate, or high water needs</li>
+        <li>🌱 <strong>Soil Compatibility:</strong> Crops that thrive in your soil type</li>
+        <li>💰 <strong>Profitability:</strong> Economic viability of crops</li>
+      </ul>
+      <h3>Why Use This Feature:</h3>
+      <ul>
+        <li>Maximize crop yield and quality</li>
+        <li>Reduce crop failure risk</li>
+        <li>Plan planting schedules effectively</li>
+        <li>Make informed farming decisions</li>
+      </ul>
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+        <button onclick="toggleRecommendInfo(); scrollToSection('recommend');" class="primary-btn" style="width: 100%; padding: 12px; cursor: pointer; border: none; border-radius: 8px; background: #4f772d; color: white; font-weight: 600;">Get Recommendations</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="userDashboardModal" class="modal" onclick="if(event.target.id === 'userDashboardModal') toggleUserDashboard()">
+  <div class="modal-content feature-modal" style="max-width: 800px;">
+    <span class="close-btn" onclick="toggleUserDashboard()">✖</span>
+    <div class="modal-body">
+      <h2>📊 My Dashboard</h2>
+      <p>View your plants, monitor health scores, check local weather, and get AI-powered growth strategies.</p>
+      
+      <div id="dashboardPlantsContainer" style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+        <!-- Plant cards will be injected here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Water History Modal -->
+<div id="waterHistoryModal" class="modal" onclick="if(event.target.id === 'waterHistoryModal') closeWaterHistory()">
+  <div class="modal-content feature-modal" style="max-width: 600px;">
+    <span class="close-btn" onclick="closeWaterHistory()">✖</span>
+    <div class="modal-body">
+      <h2>💧 Water History</h2>
+      <p id="waterHistoryPlantName" style="color: var(--accent); font-weight: 600; margin-bottom: 15px;"></p>
+      <div id="waterHistoryList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+        <!-- History entries injected here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ def basic_analysis(file):
     else:
         return "normal leaf with slight variation"
 
-def ask_ollama(plant_type, location, description, lang="en", weather=None, logs=None):
+def ask_ollama(plant_type, location, description, lang="en", weather=None, logs=None, soil_info=None):
     language_instruction = "Answer in Hindi." if lang == "hi" else "Answer in English."
     log_summary = "No logs available"
     if logs:
@@ -29,6 +29,7 @@ Location: {location}
 Observed condition: {description}
 
 Weather conditions: {weather if weather else "Not available"}
+Soil conditions: {soil_info if soil_info else "Not available"}
 
 {log_summary}
 
@@ -56,7 +57,7 @@ Structure your response in clear, professional bullet points. Ensure all advice 
 
     return response.json()["response"]
     
-def analyze_plant_image(file, plant_type, location, lang="en", logs=None):
+def analyze_plant_image(file, plant_type, location, lang="en", logs=None, soil_info=None):
     try:
         desc = basic_analysis(file)
         # Optional weather
@@ -71,7 +72,8 @@ def analyze_plant_image(file, plant_type, location, lang="en", logs=None):
             description=desc,
             lang=lang,
             weather=weather,
-            logs=logs
+            logs=logs,
+            soil_info=soil_info
         )
         return {
             "disease": desc,
