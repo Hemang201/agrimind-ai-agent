@@ -108,6 +108,8 @@ def recommend_crops(city: str, weather: dict, season: str = None, plant_type: st
     # Filter potential additions by plant_type IF plant_type is specified
     for crop in potential_additions:
         crop_cat = CROP_CATEGORIES.get(crop)
+        # Fallback: if crop_cat is not found, we could try to infer it from CROP_DATABASE 
+        # but for now, we only filter if plant_type is actually set.
         if not plant_type or plant_type == "" or crop_cat == plant_type:
             recommended.append(crop)
 

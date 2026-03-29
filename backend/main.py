@@ -337,5 +337,9 @@ async def transcribe_audio(file: UploadFile = File(...), lang: str = "en"):
         if os.path.exists(tmp_wav_path):
             os.remove(tmp_wav_path)
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(os.path.join(_frontend_dir, "favicon.svg"))
+
 # Important: Mounting at root must be the last step to not interfere with API routes
 app.mount("/", StaticFiles(directory=str(_frontend_dir), html=True), name="frontend")
