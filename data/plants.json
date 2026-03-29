@@ -5,7 +5,7 @@
         "city": "Delhi",
         "soil_type": "Loamy",
         "soil_minerals": "N: 70%, P: 40%, K: 50%, Moisture: 60%",
-        "created_at": "2026-03-28T07:43:51.352183",
+        "created_at": "2026-03-29T12:55:55.045998",
         "growth_stage": "germination",
         "logs": [
             {
@@ -114,6 +114,98 @@
                         "humidity": 33,
                         "rain": 0,
                         "description": "overcast clouds"
+                    },
+                    "plan": {
+                        "recommended_water_liters": 1.2,
+                        "reason": [
+                            "Morderate temperature detected",
+                            "Low humidity increases evaporation"
+                        ]
+                    },
+                    "stage": "germination"
+                }
+            },
+            {
+                "timestamp": "2026-03-29T12:49:20.712162",
+                "action": "watering",
+                "data": {
+                    "amount": 0.8,
+                    "unit": "liters",
+                    "weather": {
+                        "temperature": 33.05,
+                        "humidity": 35,
+                        "rain": 0,
+                        "description": "haze"
+                    },
+                    "plan": {
+                        "recommended_water_liters": 1.2,
+                        "reason": [
+                            "Morderate temperature detected",
+                            "Low humidity increases evaporation"
+                        ]
+                    },
+                    "stage": "germination"
+                }
+            },
+            {
+                "timestamp": "2026-03-29T12:54:36.888932",
+                "action": "diagnosis",
+                "data": {
+                    "issue": "normal leaf with slight variation",
+                    "ai_advice": "**Tomato Plant Diagnosis Report**\n\n**1. Most likely issue or disease:**\n\n* **Scientific name:** Water Deficiency Stress Syndrome (WDSS)\n* **Common name:** Drought Stress Syndrome\n\nThe observed slight variation on the tomato leaf, combined with the warm temperature (33.05\u00b0C) and low humidity (35%) in Delhi, suggests that the plant might be experiencing water stress.\n\n**2. Reason based on plant + climate:**\n\n* **Evidence from symptoms:** The normal leaf with slight variation indicates possible water deficiency.\n* **Weather conditions:** Temperature of 33.05\u00b0C and humidity of 35% are conducive to evapotranspiration (water loss) through leaves, leading to soil drying out faster than usual.\n* **Logs analysis:** Watering logs show that the plant has received moderate watering, but the recommended amount is still being met.\n\n**3. Exact actionable treatment:**\n\n* **Step 1:** Check the soil moisture by inserting your finger into the soil up to the first knuckle. If it feels dry, it's time to water.\n* **Step 2:** Water the plant with 0.5-1 liter of water (depending on the soil type and temperature) as soon as possible.\n* **Step 3:** Ensure good air circulation around the plant to reduce evapotranspiration.\n\n**4. Watering advice:**\n\n* **Adjusted for condition and weather:** Water the tomato plant every 2-3 days or whenever the top 1-2 inches of soil feel dry.\n* **Avoid frequent shallow watering; instead, water deeply once or twice a week.**\n\n**5. Whether urgent or not:**\n\n* **Priority level:** Medium (the issue is not urgent but needs attention to prevent further damage)\n* **Timeline:** Address the issue within the next 24 hours to prevent further damage and promote plant recovery\n\n**6. Prevention strategies (long-term measures):**\n\n* **Monitor soil moisture regularly:** Check the soil moisture at least once a week, especially during hot and dry weather.\n* **Adjust watering schedule accordingly:** Based on soil moisture levels, adjust the watering schedule to ensure the plant receives the right amount of water.\n* **Mulch around the plant:** Mulch can help retain moisture and regulate soil temperature.\n\n**7. Monitoring recommendations:**\n\n* **Observe leaf condition:** Monitor the tomato leaves for any signs of stress or damage (e.g., yellowing, curling).\n* **Check soil moisture:** Regularly check the soil moisture to ensure it remains optimal for plant growth.\n* **Re-evaluate every 2-3 days:** Re-assess the plant's condition and adjust watering schedules as needed.\n\nBy following these evidence-based recommendations, you can help your tomato plant recover from water deficiency stress syndrome and promote healthy growth.",
+                    "lang": "en"
+                }
+            },
+            {
+                "timestamp": "2026-03-29T12:55:33.624891",
+                "action": "diagnosis",
+                "data": {
+                    "issue": "normal leaf with slight variation",
+                    "ai_advice": "**Tomato Plant Diagnosis Report**\n\n**1. Most likely issue or disease:**\n\t* **Scientific name:** Water Deficiency Stress Syndrome (WDSS)\n\t* **Common name:** Drought Stress Syndrome\n\nThe observed slight variation on the tomato leaf, combined with the warm temperature (33.05\u00b0C) and low humidity (35%) in Delhi, suggests that the plant might be experiencing water stress.\n\n**2. Reason based on plant + climate:**\n\t* **Evidence from symptoms:** The normal leaf with slight variation indicates possible water deficiency.\n\t* **Weather conditions:** Temperature of 33.05\u00b0C and humidity of 35% are conducive to evapotranspiration (water loss) through leaves, leading to soil drying out faster than usual.\n\t* **Logs analysis:** Watering logs show that the plant has received moderate watering, but the recommended amount is still being met.\n\n**3. Exact actionable treatment:**\n\t* **Step 1:** Check the soil moisture by inserting your finger into the soil up to the first knuckle. If it feels dry, it's time to water.\n\t* **Step 2:** Water the plant with 0.5-1 liter of water (depending on the soil type and temperature) as soon as possible.\n\t* **Step 3:** Ensure good air circulation around the plant to reduce evapotranspiration.\n\n**4. Watering advice:**\n\t* **Adjusted for condition and weather:** Water the tomato plant every 2-3 days or whenever the top 1-2 inches of soil feel dry.\n\t* **Avoid frequent shallow watering; instead, water deeply once or twice a week.**\n\n**5. Whether urgent or not:**\n\t* **Priority level:** Medium\n\t* **Timeline:** Address the issue within the next 24 hours to prevent further damage and promote plant recovery\n\n**6. Prevention strategies (long-term measures):**\n\t* **Monitor soil moisture regularly:** Check the soil moisture at least once a week, especially during hot and dry weather.\n\t* **Adjust watering schedule accordingly:** Based on soil moisture levels, adjust the watering schedule to ensure the plant receives the right amount of water.\n\t* **Mulch around the plant:** Mulch can help retain moisture and regulate soil temperature.\n\n**7. Monitoring recommendations:**\n\t* **Observe leaf condition:** Monitor the tomato leaves for any signs of stress or damage (e.g., yellowing, curling).\n\t* **Check soil moisture:** Regularly check the soil moisture to ensure it remains optimal for plant growth.\n\t* **Re-evaluate every 2-3 days:** Re-assess the plant's condition and adjust watering schedules as needed.\n\nBy following these evidence-based recommendations, you can help your tomato plant recover from water deficiency stress syndrome and promote healthy growth.",
+                    "lang": "en"
+                }
+            },
+            {
+                "timestamp": "2026-03-29T13:06:02.393959",
+                "action": "diagnosis",
+                "data": {
+                    "issue": "normal leaf with slight variation",
+                    "ai_advice": "**Tomato Plant Diagnosis Report**\n\n**1. Most likely issue or disease:**\n* **Scientific name:** Water Deficiency Stress Syndrome (WDSS)\n* **Common name:** Drought Stress Syndrome\n\nThe observed slight variation on the tomato leaf, combined with the warm temperature (33.05\u00b0C) and low humidity (35%) in Delhi, suggests that the plant might be experiencing water stress.\n\n**2. Reason based on plant + climate:**\n* **Evidence from symptoms:** The normal leaf with slight variation indicates possible water deficiency.\n* **Weather conditions:** Temperature of 33.05\u00b0C and humidity of 35% are conducive to evapotranspiration (water loss) through leaves, leading to soil drying out faster than usual.\n* **Logs analysis:** Watering logs show that the plant has received moderate watering, but the recommended amount is still being met.\n\n**3. Exact actionable treatment:**\n* **Step 1:** Check the soil moisture by inserting your finger into the soil up to the first knuckle. If it feels dry, it's time to water.\n* **Step 2:** Water the plant with 0.5-1 liter of water (depending on the soil type and temperature) as soon as possible.\n* **Step 3:** Ensure good air circulation around the plant to reduce evapotranspiration.\n\n**4. Watering advice:**\n* **Adjusted for condition and weather:** Water the tomato plant every 2-3 days or whenever the top 1-2 inches of soil feel dry.\n* **Avoid frequent shallow watering; instead, water deeply once or twice a week.**\n\n**5. Whether urgent or not:**\n* **Priority level:** Low to moderate\n* **Timeline:** Address the issue within the next 24 hours to prevent further damage and promote plant recovery\n\n**6. Prevention strategies (long-term measures):**\n* **Monitor soil moisture regularly:** Check the soil moisture at least once a week, especially during hot and dry weather.\n* **Adjust watering schedule accordingly:** Based on soil moisture levels, adjust the watering schedule to ensure the plant receives the right amount of water.\n* **Mulch around the plant:** Mulch can help retain moisture and regulate soil temperature.\n\n**7. Monitoring recommendations:**\n* **Observe leaf condition:** Monitor the tomato leaves for any signs of stress or damage (e.g., yellowing, curling).\n* **Check soil moisture:** Regularly check the soil moisture to ensure it remains optimal for plant growth.\n* **Re-evaluate every 2-3 days:** Re-assess the plant's condition and adjust watering schedules as needed.\n\nBy following these evidence-based recommendations, you can help your tomato plant recover from water deficiency stress syndrome and promote healthy growth.",
+                    "lang": "en"
+                }
+            }
+        ]
+    },
+    "Neem": {
+        "name": "Neem",
+        "plant_type": "Neem",
+        "city": "Delhi",
+        "soil_type": "Loamy",
+        "soil_minerals": "N: 50%, P: 50%, K: 50%, Moisture: 50%",
+        "created_at": "2026-03-29T12:59:44.638688",
+        "growth_stage": "germination",
+        "logs": []
+    },
+    "Marigold": {
+        "name": "Marigold",
+        "plant_type": "Marigold",
+        "city": "Delhi",
+        "soil_type": "Loamy",
+        "soil_minerals": "N: 50%, P: 50%, K: 50%, Moisture: 50%",
+        "created_at": "2026-03-29T13:03:04.239464",
+        "growth_stage": "germination",
+        "logs": [
+            {
+                "timestamp": "2026-03-29T13:03:16.020870",
+                "action": "watering",
+                "data": {
+                    "amount": 0.1,
+                    "unit": "liters",
+                    "weather": {
+                        "temperature": 33.05,
+                        "humidity": 35,
+                        "rain": 0,
+                        "description": "haze"
                     },
                     "plan": {
                         "recommended_water_liters": 1.2,

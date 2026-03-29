@@ -443,20 +443,22 @@ function setLang(lang) {
   if (lp) lp.classList.remove('active');
 }
 
+function getInputValue(id1, id2) {
+  const v1 = document.getElementById(id1)?.value?.trim();
+  const v2 = document.getElementById(id2)?.value?.trim();
+  return v1 || v2 || '';
+}
+
 async function addPlant() {
-  const nameEl = document.getElementById('addPlantName');
-  const typeEl = document.getElementById('addPlantType');
-  const cityEl = document.getElementById('addPlantCity');
+  const name = getInputValue('addPlantName', 'plantName');
+  const plantType = getInputValue('addPlantType', 'plantType');
+  const city = getInputValue('addPlantCity', 'plantCity');
+  const soilType = getInputValue('addPlantSoilType', 'plantSoilType');
   
-  const name = (nameEl?.value || document.getElementById('plantName')?.value || '').trim();
-  const plantType = (typeEl?.value || document.getElementById('plantType')?.value || '').trim();
-  const city = (cityEl?.value || document.getElementById('plantCity')?.value || '').trim();
-  const soilType = (document.getElementById('addPlantSoilType')?.value || document.getElementById('plantSoilType')?.value || '').trim();
-  
-  const n = document.getElementById('addPlantN')?.value || document.getElementById('plantN')?.value || 50;
-  const p = document.getElementById('addPlantP')?.value || document.getElementById('plantP')?.value || 50;
-  const k = document.getElementById('addPlantK')?.value || document.getElementById('plantK')?.value || 50;
-  const m = document.getElementById('addPlantM')?.value || document.getElementById('plantM')?.value || 50;
+  const n = getInputValue('addPlantN', 'plantN');
+  const p = getInputValue('addPlantP', 'plantP');
+  const k = getInputValue('addPlantK', 'plantK');
+  const m = getInputValue('addPlantM', 'plantM');
   const minerals = `N: ${n}%, P: ${p}%, K: ${k}%, Moisture: ${m}%`;
 
   if (!name || !plantType || !city) {
@@ -474,15 +476,16 @@ async function addPlant() {
 
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.detail || err.error || 'Unable to add plant');
+      console.error("SERVER ERROR:", err);
+      throw new Error(`[Status ${res.status}] ${JSON.stringify(err.detail || err.error || err)}`);
     }
 
     displayPlantsModal();
     clearInputs();
     alert(getTranslation('plantAddedSuccess'));
   } catch (error) {
-    console.error(error);
-    alert(getTranslation('addPlantError') + error.message);
+    console.error("ADD PLANT FAILED:", error);
+    alert(getTranslation('addPlantError') + "\n" + error.message);
   }
 }
 
@@ -620,6 +623,62 @@ async function askAI() {
   }
 }
 
+function formatRecommendations(data) {
+  if (!data || typeof data !== 'object') return JSON.stringify(data);
+  
+  const city = data.city || 'Your Location';
+  const weather = data.weather || {};
+  const crops = data.recommendations || [];
+  const season = data.season || '';
+
+  let weatherHtml = '';
+  if (weather.temperature !== undefined) {
+    weatherHtml = `
+      <div class="weather-summary">
+        <div class="weather-item">
+          <i class="fas fa-city"></i>
+          <span>${city} <small>${season}</small></span>
+        </div>
+        <div class="weather-item">
+          <i class="fas fa-thermometer-half"></i>
+          <span>${weather.temperature}°C</span>
+        </div>
+        <div class="weather-item">
+          <i class="fas fa-tint"></i>
+          <span>${weather.humidity}% <small>Humidity</small></span>
+        </div>
+        <div class="weather-item">
+          <i class="fas fa-cloud-showers-heavy"></i>
+          <span>${weather.rain}mm <small>Rain</small></span>
+        </div>
+        <div class="weather-item">
+          <i class="fas fa-info-circle"></i>
+          <span>${weather.description || 'Clear'}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  let cropsHtml = '';
+  if (crops.length > 0) {
+    cropsHtml = `
+      <div class="crop-results-title"><i class="fas fa-seedling"></i> ${getTranslation('recommendationsLabel') || 'Recommended Crops:'}</div>
+      <div class="crop-grid">
+        ${crops.map(crop => `<div class="crop-chip"><i class="fas fa-leaf"></i>${crop}</div>`).join('')}
+      </div>
+    `;
+  } else {
+    cropsHtml = `<p>${getTranslation('noPlants') || 'No recommendations found for these conditions.'}</p>`;
+  }
+
+  return `
+    <div class="recommendation-container">
+      ${weatherHtml}
+      ${cropsHtml}
+    </div>
+  `;
+}
+
 async function getRecommendation() {
   const city = document.getElementById('recommendCity').value.trim();
   const season = document.getElementById('recommendSeason').value || '';
@@ -639,6 +698,8 @@ async function getRecommendation() {
     return;
   }
 
+  resultBox.innerHTML = `<span style="color: #4f772d;"><i class="fas fa-spinner fa-spin"></i> ${getTranslation('thinking')}</span>`;
+
   try {
     const params = new URLSearchParams({ city, season, plant_type: plantType, soil_type: soilType, soil_minerals: minerals });
     const res = await fetch(`${API_BASE_URL}/recommend?${params.toString()}`);
@@ -654,7 +715,7 @@ async function getRecommendation() {
     } else if (Array.isArray(data)) {
       resultBox.innerHTML = `<b>${getTranslation('recommendationsLabel')}</b><br>${data.join('<br>')}`;
     } else {
-      resultBox.innerHTML = `<b>${getTranslation('resultLabel')}</b><br>${JSON.stringify(data, null, 2)}`;
+      resultBox.innerHTML = formatRecommendations(data);
     }
   } catch (error) {
     console.error(error);
@@ -895,6 +956,8 @@ async function getRecommendationModal() {
     return;
   }
 
+  resultBox.innerHTML = `<span style="color: #4f772d;"><i class="fas fa-spinner fa-spin"></i> ${getTranslation('thinking')}</span>`;
+
   try {
     const params = new URLSearchParams({ city, season, plant_type: plantType, soil_type: soilType, soil_minerals: minerals });
     const res = await fetch(`${API_BASE_URL}/recommend?${params.toString()}`);
@@ -910,7 +973,7 @@ async function getRecommendationModal() {
     } else if (Array.isArray(data)) {
       resultBox.innerHTML = `<b>${getTranslation('recommendationsLabel')}</b><br>${data.join('<br>')}`;
     } else {
-      resultBox.innerHTML = `<b>${getTranslation('resultLabel')}</b><br>${JSON.stringify(data, null, 2)}`;
+      resultBox.innerHTML = formatRecommendations(data);
     }
     clearInputs();
   } catch (error) {

@@ -959,3 +959,85 @@ input[type="range"]::-webkit-slider-thumb:hover {
   50%       { opacity: 0.5; }
 }
 
+/* ================= RECOMMENDATIONS FORMATTING ================= */
+.recommendation-container {
+  margin-top: 15px;
+  animation: fadeIn 0.5s ease;
+}
+
+.weather-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(82, 183, 136, 0.2);
+  margin-bottom: 20px;
+}
+
+.weather-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weather-item i {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.weather-item span {
+  font-weight: 600;
+  color: #fff;
+}
+
+.weather-item small {
+  color: #a8b8b0;
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+.crop-results-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--light-accent);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crop-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.crop-chip {
+  background: linear-gradient(135deg, rgba(82, 183, 136, 0.1), rgba(183, 215, 122, 0.15));
+  border: 1px solid rgba(183, 215, 122, 0.3);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: default;
+}
+
+.crop-chip:hover {
+  background: rgba(82, 183, 136, 0.25);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 183, 136, 0.2);
+}
+
+.crop-chip i {
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+

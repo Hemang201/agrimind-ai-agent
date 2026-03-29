@@ -1,5 +1,4 @@
-from fastapi import FastAPI
-from fastapi import FastAPI, File, UploadFile, Body, Form
+from fastapi import FastAPI, File, UploadFile, Body, Form, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import pathlib
@@ -47,10 +46,18 @@ load_dotenv()
 _frontend_dir = pathlib.Path(__file__).parent.parent / "frontend"
 # We will mount this at root at the very end of the file to capture all static requests.
 
+from pydantic import BaseModel
+
+class PlantCreate(BaseModel):
+    name: str
+    plant_type: str
+    city: str
+
 # Create plant
 @app.post("/plant")
-def add_plant(name: str, plant_type: str, city: str, soil_type: str = "", soil_minerals: str = ""):
-    plant = create_plant(name, plant_type, city, soil_type, soil_minerals)
+def add_plant(payload: PlantCreate, soil_type: str = "", soil_minerals: str = ""):
+    print(f"DEBUG: Adding plant {payload.name} in {payload.city}")
+    plant = create_plant(payload.name, payload.plant_type, payload.city, soil_type, soil_minerals)
     return plant.to_dict()
 
 # Get all plants

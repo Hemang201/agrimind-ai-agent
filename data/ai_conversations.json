@@ -34,5 +34,17 @@
         "answer": " For optimal growth of tomato plants during the germination stage, it's best to use well-draining loamy soil with a slightly acidic pH between 6.0 and 6.8. Enriching the soil with compost can improve its texture and nutrient content, promoting healthy root development and tomato growth. Make sure the soil is loose and free of large stones or debris. If you are unsure about your soil type, consider getting a soil test kit to determine its pH and nutrient levels. Next steps would be:\n\n1. Prepare the planting area by loosening the soil and removing any rocks or debris.\n2. Amend the soil with organic matter such as compost, aged manure, or peat moss to improve texture and nutrient content.\n3. Test the soil pH level if necessary, aiming for a range between 6.0 and 6.8.\n4. Plant tomato seeds about 1/2 inch deep and water gently but consistently.\n5. Keep the area well-drained to prevent waterlogging and root rot.",
         "context": "Tomato (Tomato): stage=germination, logs=9",
         "lang": "en"
+    },
+    {
+        "question": "what is best soil type for tomato",
+        "answer": " The best soil type for tomatoes during the germination stage is a loose, well-draining mix with a pH between 6.0 to 7.0. A good combination can be a mixture of equal parts of compost, peat moss, and vermiculite or perlite. It's essential that the soil is rich in organic matter for good nutrient retention and water drainage to prevent root rot.\n\nNext steps would include:\n1. Prepare the containers or seed trays with your chosen soil mix.\n2. Plant the tomato seeds about 1/2 inch deep in the soil, spacing them appropriately.\n3. Water gently but thoroughly after planting, making sure not to overwater.\n4. Place the containers in a warm location with plenty of sunlight for proper germination.",
+        "context": "Tomato (Tomato): stage=germination, logs=9",
+        "lang": "en"
+    },
+    {
+        "question": "best soil type for tomato",
+        "answer": " The best soil type for tomatoes during the germination phase is a loose, well-drained soil with a pH between 6.0 and 7.0. Adding compost or organic matter can help improve the soil structure. It's also beneficial to plant marigolds alongside tomatoes as they are known to repel certain pests. Keep the soil consistently moist but not waterlogged. Next steps would be:\n\n1. Prepare the soil by loosening it and adding compost or organic matter if necessary.\n2. Ensure the soil pH is within the recommended range (6.0-7.0). You can test this using a soil pH kit, which is readily available at gardening stores.\n3. Plant your tomato seeds in the prepared soil, spacing them about 1 inch deep and 2 feet apart.\n4. Water the soil thoroughly to help the seeds germinate.\n5. Consider planting marigolds nearby as a natural pest repellent.",
+        "context": "Tomato (Tomato): stage=germination, logs=12\nNeem (Neem): stage=germination, logs=0\nMarigold (Marigold): stage=germination, logs=1",
+        "lang": "en"
     }
 ]

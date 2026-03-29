@@ -37,6 +37,25 @@ SOIL_BASED_ADJUSTMENTS = {
 }
 
 
+# Define which category each adjustment crop belongs to
+CROP_CATEGORIES = {
+    "Spinach": "vegetables", "Carrot": "vegetables", "Broccoli": "vegetables", "Garlic": "vegetables", "Peas": "vegetables",
+    "Marigold": "flowers", "Chrysanthemum": "flowers", "Rose": "flowers", "Dahlia": "flowers", "Petunia": "flowers",
+    "Mustard": "cashcrops", "Wheat": "cashcrops", "Potato": "cashcrops",
+    "Lettuce": "vegetables", "Tomato": "vegetables", "Cucumber": "vegetables", "Radish": "vegetables", "Cauliflower": "vegetables",
+    "Sunflower": "flowers", "Jasmine": "flowers", "Zinnia": "flowers", "Narcissus": "flowers",
+    "Cotton": "cashcrops", "Soybean": "cashcrops", "Sugarcane": "cashcrops",
+    "Okra": "vegetables", "Corn": "vegetables", "Sweet Potato": "vegetables", "Chilli": "vegetables", "Basil": "vegetables",
+    "Hibiscus": "flowers", "Bougainvillea": "flowers", "Tulip": "flowers",
+    "Sorghum": "cashcrops", "Pearl Millet": "cashcrops", "Groundnut": "cashcrops",
+    "Beetroot": "vegetables", "Pumpkin": "vegetables", "Onion": "vegetables", "Chard": "vegetables", "Parsley": "vegetables",
+    "Aster": "flowers",
+    "Maize": "cashcrops", "Sesame": "cashcrops",
+    "Eggplant": "vegetables", "Kale": "vegetables", "Bamboo": "vegetables", "Taro": "vegetables", "Ginger": "vegetables",
+    "Cactus": "flowers", "Millet": "cashcrops", "Sorrel": "vegetables", "Cabbage": "vegetables"
+}
+
+
 def get_season_from_month(month: int):
     if month in [12, 1, 2]:
         return "winter"
@@ -53,37 +72,44 @@ def recommend_crops(city: str, weather: dict, season: str = None, plant_type: st
         season = get_season_from_month(datetime.utcnow().month)
 
     season_data = CROP_DATABASE.get(season, {})
+    
+    # Base list: if plant_type is specific, start with that. If not, start with all.
     if plant_type and plant_type in season_data:
-        base_recommendations = season_data[plant_type]
+        recommended = list(season_data[plant_type])
     else:
-        # flatten all categories if no plant_type specified or invalid
-        base_recommendations = [c for cat in season_data.values() for c in cat]
+        recommended = [c for cat in season_data.values() for c in cat]
 
-    recommended = list(base_recommendations)
-
+    # Adjustments: we check weather and soil, but ONLY add if they match the requested plant_type
     temp = weather.get("temperature")
     humidity = weather.get("humidity")
+    potential_additions = []
 
     if temp is not None:
         if temp > 28:
-            recommended.extend(WEATHER_BASED_ADJUSTMENTS["high_temp"])
+            potential_additions.extend(WEATHER_BASED_ADJUSTMENTS["high_temp"])
         elif temp < 12:
-            recommended.extend(WEATHER_BASED_ADJUSTMENTS["low_temp"])
+            potential_additions.extend(WEATHER_BASED_ADJUSTMENTS["low_temp"])
 
     if humidity is not None:
         if humidity > 70:
-            recommended.extend(WEATHER_BASED_ADJUSTMENTS["humid"])
+            potential_additions.extend(WEATHER_BASED_ADJUSTMENTS["humid"])
         elif humidity < 40:
-            recommended.extend(WEATHER_BASED_ADJUSTMENTS["dry"])
+            potential_additions.extend(WEATHER_BASED_ADJUSTMENTS["dry"])
 
     if soil_type:
         st = soil_type.lower()
         if "sand" in st:
-            recommended.extend(SOIL_BASED_ADJUSTMENTS["sandy"])
+            potential_additions.extend(SOIL_BASED_ADJUSTMENTS["sandy"])
         elif "clay" in st:
-            recommended.extend(SOIL_BASED_ADJUSTMENTS["clay"])
+            potential_additions.extend(SOIL_BASED_ADJUSTMENTS["clay"])
         elif "loam" in st:
-            recommended.extend(SOIL_BASED_ADJUSTMENTS["loamy"])
+            potential_additions.extend(SOIL_BASED_ADJUSTMENTS["loamy"])
+
+    # Filter potential additions by plant_type IF plant_type is specified
+    for crop in potential_additions:
+        crop_cat = CROP_CATEGORIES.get(crop)
+        if not plant_type or plant_type == "" or crop_cat == plant_type:
+            recommended.append(crop)
 
     # De-duplicate and maintain order
     seen = set()
