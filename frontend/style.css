@@ -232,6 +232,7 @@ select, select option {
 /* Custom Range Sliders */
 input[type="range"] {
   -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 6px;
   background: rgba(255,255,255,0.1);
@@ -498,6 +499,30 @@ input[type="range"]::-webkit-slider-thumb:hover {
   pointer-events: all;
 }
 
+/* Chat box bubbles */
+.chat-box {
+  margin-top: 18px;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #4f772d transparent;
+}
+
+.chat-box div {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 9px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #d6eacb;
+  word-break: break-word;
+}
+
 .ai-header {
   display: flex;
   justify-content: space-between;
@@ -734,3 +759,203 @@ input[type="range"]::-webkit-slider-thumb:hover {
     height: 55px;
   }
 }
+
+/* ================= VOICE / MIC FEATURE ================= */
+
+/* Mic button inside copilot panel */
+.mic-btn {
+  background: #244d26;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--light-accent);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.mic-btn:hover {
+  background: var(--accent);
+  color: var(--dark-primary);
+  transform: scale(1.1);
+}
+
+.mic-btn.recording {
+  background: #e63946;
+  color: white;
+  animation: micPulse 1s infinite ease-in-out;
+}
+
+@keyframes micPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.6); }
+  50%       { box-shadow: 0 0 0 10px rgba(230, 57, 70, 0); }
+}
+
+/* Voice Overlay */
+.voice-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 16, 9, 0.88);
+  backdrop-filter: blur(18px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.voice-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.voice-modal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px;
+}
+
+/* Mic icon with pulsing rings */
+.voice-icon-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.voice-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: ringPulse 2s ease-out infinite;
+  opacity: 0;
+}
+
+.ring1 { width: 140px; height: 140px; animation-delay: 0s; }
+.ring2 { width: 110px; height: 110px; animation-delay: 0.5s; }
+.ring3 { width: 80px;  height: 80px;  animation-delay: 1s; }
+
+@keyframes ringPulse {
+  0%   { opacity: 0.7; transform: scale(0.8); }
+  100% { opacity: 0;   transform: scale(1.4); }
+}
+
+.voice-mic-core {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #4f772d, #90a955);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  z-index: 1;
+  box-shadow: 0 10px 40px rgba(82, 183, 136, 0.5);
+  animation: micBob 1.5s ease-in-out infinite;
+}
+
+@keyframes micBob {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+.voice-status-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--light-accent);
+  letter-spacing: 0.5px;
+}
+
+.voice-lang-text {
+  font-size: 13px;
+  color: #8fa88c;
+  letter-spacing: 0.3px;
+}
+
+.voice-interim-text {
+  font-size: 16px;
+  color: #d6eacb;
+  max-width: 320px;
+  text-align: center;
+  min-height: 24px;
+  font-style: italic;
+  transition: color 0.3s;
+}
+
+.voice-cancel-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #c3d7b8;
+  padding: 10px 28px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.25s;
+  margin-top: 8px;
+}
+
+.voice-cancel-btn:hover {
+  background: rgba(230,57,70,0.2);
+  border-color: #e63946;
+  color: #e63946;
+}
+
+/* Chat box - voice message tag */
+.chat-voice-tag {
+  display: inline-block;
+  background: rgba(82, 183, 136, 0.12);
+  border: 1px solid rgba(82, 183, 136, 0.25);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 11px;
+  color: var(--accent);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Speaker button on bot messages */
+.speak-btn {
+  background: transparent;
+  border: 1px solid rgba(82,183,136,0.3);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--accent);
+  margin-left: 8px;
+  vertical-align: middle;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.speak-btn:hover {
+  background: rgba(82,183,136,0.15);
+  transform: scale(1.1);
+}
+
+.speak-btn.speaking {
+  color: #dda15e;
+  border-color: #dda15e;
+  animation: speakerPulse 1s ease-in-out infinite;
+}
+
+@keyframes speakerPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+

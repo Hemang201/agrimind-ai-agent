@@ -1,4 +1,7 @@
-const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = window.API_BASE_URL ||
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? `${window.location.protocol}//${window.location.host}`
+    : 'http://localhost:8000');
 
 const translations = {
   en: {
@@ -1033,7 +1036,7 @@ async function analyzePlantDashboard(name, resultId) {
       </div>
     `;
   } catch (err) {
-    resultContainer.innerHTML = `<span style="color: #e63946;">❌ Error analyzing plant: ${err.message}</span>`;
+    resultContainer.innerHTML = `<span style="color: #e63946;">❌ Error: ${err.message}</span>`;
   }
 }
 
@@ -1102,3 +1105,349 @@ function closeWaterHistory() {
   const modal = document.getElementById('waterHistoryModal');
   if (modal) modal.classList.remove('active');
 }
+
+// =============================================
+// VOICE FEATURE — MediaRecorder + Backend STT
+// =============================================
+
+// =============================================
+// VOICE FEATURE — Web Audio API + WAV Recorder
+// =============================================
+
+let audioContext = null;
+let scriptProcessor = null;
+let micStream = null;
+let leftChannel = [];
+let recordingStartTime = 0;
+let recordingTimerInterval = null;
+let isRecordingVoice = false;
+let currentSpeechUtterance = null;
+
+function toggleVoiceInput() {
+  if (isRecordingVoice) {
+    stopRecordingManually();
+  } else {
+    startVoiceInput();
+  }
+}
+
+async function startVoiceInput() {
+  if (window.location.protocol === 'file:') {
+    alert('Talk to AI (Voice) requires the page to be served over HTTP.\n\nPlease open: http://localhost:8000');
+    return;
+  }
+
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+    const source = audioContext.createMediaStreamSource(micStream);
+    
+    // Using ScriptProcessorNode for wide compatibility (WAV encoding needs raw samples)
+    scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+    leftChannel = [];
+
+    scriptProcessor.onaudioprocess = (event) => {
+      if (!isRecordingVoice) return;
+      const samples = new Float32Array(event.inputBuffer.getChannelData(0));
+      leftChannel.push(samples);
+    };
+
+    source.connect(scriptProcessor);
+    scriptProcessor.connect(audioContext.destination);
+
+    const overlay = document.getElementById('voiceOverlay');
+    const statusEl = document.getElementById('voiceStatusText');
+    const micBtn = document.getElementById('micBtn');
+    const timerEl = document.getElementById('voiceTimer');
+    const interimEl = document.getElementById('voiceInterimText');
+
+    const lang = document.documentElement.lang || 'en';
+    const isHindi = lang === 'hi';
+    
+    statusEl.textContent = isHindi ? 'रिकॉर्डिंग चालू है...' : 'Recording...';
+    interimEl.textContent = '';
+    overlay.classList.add('active');
+    micBtn && micBtn.classList.add('recording');
+    
+    isRecordingVoice = true;
+    startTimer();
+
+  } catch (err) {
+    console.error('Microphone access error:', err);
+    alert('Could not access microphone: ' + err.message);
+  }
+}
+
+function stopRecordingManually() {
+  if (!isRecordingVoice) return;
+  isRecordingVoice = false;
+  
+  stopTimer();
+  const statusEl = document.getElementById('voiceStatusText');
+  const lang = document.documentElement.lang || 'en';
+  const isHindi = lang === 'hi';
+  statusEl.textContent = isHindi ? 'प्रोसेसिंग...' : 'Processing...';
+
+  // Cleanup Web Audio nodes
+  if (scriptProcessor) {
+    scriptProcessor.disconnect();
+    scriptProcessor.onaudioprocess = null;
+  }
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+  }
+  if (audioContext) {
+    audioContext.close();
+  }
+
+  // Create WAV blob
+  const wavBlob = createWavBlob(leftChannel, 16000);
+  sendAudioToBackend(wavBlob, lang);
+}
+
+async function sendAudioToBackend(audioBlob, lang) {
+  const formData = new FormData();
+  formData.append('file', audioBlob, 'voice.wav');
+  
+  try {
+    const res = await fetch(`${API_BASE_URL}/transcribe?lang=${lang}`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    
+    if (data.text) {
+      sendVoiceMessage(data.text);
+    } else if (data.error) {
+      alert('Voice Error: ' + data.error);
+    }
+  } catch (err) {
+    console.error('Transcription Error:', err);
+    alert('Failed to connect to transcription service.');
+  } finally {
+    closeVoiceOverlay();
+  }
+}
+
+function cancelVoiceInput() {
+  isRecordingVoice = false;
+  if (scriptProcessor) {
+    scriptProcessor.disconnect();
+    scriptProcessor.onaudioprocess = null;
+  }
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+  }
+  if (audioContext) {
+    audioContext.close();
+  }
+  closeVoiceOverlay();
+  stopTimer();
+}
+
+/**
+ * Encodes Float32 samples into a standard 16-bit PCM WAV blob.
+ */
+function createWavBlob(samplesList, sampleRate) {
+  // Flatten chunks
+  let totalLength = 0;
+  for (let i = 0; i < samplesList.length; i++) {
+    totalLength += samplesList[i].length;
+  }
+  const samples = new Float32Array(totalLength);
+  let offset = 0;
+  for (let i = 0; i < samplesList.length; i++) {
+    samples.set(samplesList[i], offset);
+    offset += samplesList[i].length;
+  }
+
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+
+  /* RIFF identifier */
+  writeString(view, 0, 'RIFF');
+  /* file length */
+  view.setUint32(4, 32 + samples.length * 2, true);
+  /* RIFF type */
+  writeString(view, 8, 'WAVE');
+  /* format chunk identifier */
+  writeString(view, 12, 'fmt ');
+  /* format chunk length */
+  view.setUint32(16, 16, true);
+  /* sample format (raw) */
+  view.setUint16(20, 1, true);
+  /* channel count */
+  view.setUint16(22, 1, true);
+  /* sample rate */
+  view.setUint32(24, sampleRate, true);
+  /* byte rate (sample rate * block align) */
+  view.setUint32(28, sampleRate * 2, true);
+  /* block align (channel count * bytes per sample) */
+  view.setUint16(32, 2, true);
+  /* bits per sample */
+  view.setUint16(34, 16, true);
+  /* data chunk identifier */
+  writeString(view, 36, 'data');
+  /* data chunk length */
+  view.setUint32(40, samples.length * 2, true);
+
+  // Write samples (PCM 16-bit)
+  let index = 44;
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(index, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    index += 2;
+  }
+
+  return new Blob([view], { type: 'audio/wav' });
+}
+
+function writeString(view, offset, string) {
+  for (let i = 0; i < string.length; i++) {
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
+}
+
+function closeVoiceOverlay() {
+  const overlay = document.getElementById('voiceOverlay');
+  const micBtn = document.getElementById('micBtn');
+  overlay && overlay.classList.remove('active');
+  micBtn && micBtn.classList.remove('recording');
+  isRecordingVoice = false;
+}
+
+function startTimer() {
+  recordingStartTime = Date.now();
+  const timerEl = document.getElementById('voiceTimer');
+  if (timerEl) timerEl.textContent = '00:00';
+  
+  recordingTimerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+    const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+    const secs = String(elapsed % 60).padStart(2, '0');
+    if (timerEl) timerEl.textContent = `${mins}:${secs}`;
+    
+    if (elapsed >= 30) stopRecordingManually();
+  }, 1000);
+}
+
+function stopTimer() {
+  if (recordingTimerInterval) {
+    clearInterval(recordingTimerInterval);
+    recordingTimerInterval = null;
+  }
+}
+
+function sendVoiceMessage(text) {
+  const popup = document.getElementById('aiPopup');
+  if (popup && !popup.classList.contains('active')) {
+    popup.classList.add('active');
+  }
+
+  const chatBox = document.getElementById('chatBox');
+  const input = document.getElementById('chatInput');
+  if (!chatBox) return;
+
+  const userDiv = document.createElement('div');
+  userDiv.innerHTML = getTranslation('userPrefix') + text + '<span class="chat-voice-tag">🎤 voice</span>';
+  chatBox.appendChild(userDiv);
+
+  const loading = document.createElement('div');
+  loading.textContent = '🌱 ' + getTranslation('thinking');
+  chatBox.appendChild(loading);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  if (input) input.value = '';
+
+  setTimeout(async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/talk`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: text,
+          lang: document.documentElement.lang || 'en'
+        })
+      });
+      const result = await res.json();
+      const answer = result.answer || getTranslation('noAnswer');
+      const fullText = getTranslation('botPrefix') + answer;
+
+      if (res.ok) {
+        loading.textContent = '';
+        let i = 0;
+        function typeChar() {
+          if (i <= fullText.length) {
+            loading.textContent = fullText.slice(0, i);
+            i++;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            setTimeout(typeChar, 18);
+          } else {
+            addSpeakButton(loading, answer);
+            speakResponse(answer);
+          }
+        }
+        typeChar();
+      } else {
+        loading.textContent = getTranslation('botPrefix') + getTranslation('chatError') + (result.error || 'Unknown');
+      }
+    } catch (err) {
+      loading.textContent = getTranslation('botPrefix') + getTranslation('chatError') + err.message;
+      console.error(err);
+    }
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 500);
+}
+
+function addSpeakButton(el, text) {
+  const btn = document.createElement('button');
+  btn.className = 'speak-btn';
+  btn.title = 'Read aloud';
+  btn.innerHTML = '🔊';
+  btn.onclick = () => {
+    if (btn.classList.contains('speaking')) {
+      stopSpeaking();
+      btn.classList.remove('speaking');
+    } else {
+      stopSpeaking();
+      document.querySelectorAll('.speak-btn.speaking').forEach(b => b.classList.remove('speaking'));
+      btn.classList.add('speaking');
+      speakResponse(text, () => btn.classList.remove('speaking'));
+    }
+  };
+  el.appendChild(btn);
+}
+
+function speakResponse(text, onEnd) {
+  if (!window.speechSynthesis) return;
+  stopSpeaking();
+  const lang = document.documentElement.lang || 'en';
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
+  utterance.rate = 0.95;
+  utterance.pitch = 1.05;
+  const voices = window.speechSynthesis.getVoices();
+  const baseLang = utterance.lang.split('-')[0].toLowerCase();
+  const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(baseLang));
+  if (matchedVoice) utterance.voice = matchedVoice;
+  utterance.onend = () => {
+    currentSpeechUtterance = null;
+    if (typeof onEnd === 'function') onEnd();
+  };
+  currentSpeechUtterance = utterance;
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+  if (window.speechSynthesis && window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+  }
+  currentSpeechUtterance = null;
+}
+
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+}
+
+

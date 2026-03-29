@@ -176,7 +176,7 @@
   <div class="ai-header">
     <div class="ai-header-left">
       <img src="https://cdn-icons-png.flaticon.com/512/2909/2909767.png" class="ai-logo">
-      <div><h3>AgriMind Copilot</h3><span style="color:#a8e6cf;">Online</span></div>
+      <div><h3>Agri AI</h3><span style="color:#a8e6cf;">Online</span></div>
     </div>
     <span class="close-btn" onclick="toggleAI()">✖</span>
   </div>
@@ -188,6 +188,7 @@
       </div>
       <div class="copilot-side">
         <button class="tools-btn">⚙</button>
+        <button class="mic-btn" id="micBtn" onclick="toggleVoiceInput()" title="Speak to AI">🎤</button>
         <button class="send-btn">➤</button>
       </div>
     </div>
@@ -500,6 +501,26 @@
       <div id="waterHistoryList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
         <!-- History entries injected here -->
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Voice Recording Overlay -->
+<div id="voiceOverlay" class="voice-overlay">
+  <div class="voice-modal-card">
+    <div class="voice-icon-wrap">
+      <div class="voice-ring ring1"></div>
+      <div class="voice-ring ring2"></div>
+      <div class="voice-ring ring3"></div>
+      <div class="voice-mic-core" id="voiceMicCore">🎤</div>
+    </div>
+    <p class="voice-status-text" id="voiceStatusText">Listening...</p>
+    <p class="voice-lang-text" id="voiceLangText">Speak in English or Hindi</p>
+    <div id="voiceTimer" style="font-family: monospace; font-size: 18px; color: #52b788; margin-top: 5px;">00:00</div>
+    <p class="voice-interim-text" id="voiceInterimText"></p>
+    <div style="display: flex; gap: 10px; margin-top: 8px;">
+        <button class="voice-stop-btn" onclick="stopRecordingManually()" style="background: #4f772d; border: none; color: white; padding: 10px 24px; border-radius: 30px; cursor: pointer; font-weight: 600;">Stop & Transcribe</button>
+        <button class="voice-cancel-btn" onclick="cancelVoiceInput()">✖ Cancel</button>
     </div>
   </div>
 </div>

@@ -1,5 +1,10 @@
 from fastapi import FastAPI
 from fastapi import FastAPI, File, UploadFile, Body, Form
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import pathlib
+import tempfile
+import speech_recognition as sr
 from PIL import Image
 import io
 import os
@@ -38,9 +43,9 @@ app.add_middleware(
 
 load_dotenv()
 
-@app.get("/")
-def root():
-    return {"message": "AgriMind API is running"}
+# Serve frontend static files
+_frontend_dir = pathlib.Path(__file__).parent.parent / "frontend"
+# We will mount this at root at the very end of the file to capture all static requests.
 
 # Create plant
 @app.post("/plant")
@@ -302,6 +307,28 @@ def log_water(name: str, data: dict):
 
     return {"message": "Water logged"}
 
-@app.get("/preset-soil/{city}")
-def get_preset_soil(city: str):
-    return lookup_preset_soil(city)
+@app.post("/transcribe")
+async def transcribe_audio(file: UploadFile = File(...), lang: str = "en"):
+    # Frontend now sends a pure .wav file, so no conversion (ffmpeg) needed!
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_wav:
+        tmp_wav_path = tmp_wav.name
+        content = await file.read()
+        tmp_wav.write(content)
+        
+    try:
+        recognizer = sr.Recognizer()
+        with sr.AudioFile(tmp_wav_path) as source:
+            audio_data = recognizer.record(source)
+            text = recognizer.recognize_google(audio_data, language="hi-IN" if lang == "hi" else "en-IN")
+            return {"text": text}
+    except sr.UnknownValueError:
+        return {"error": "Could not understand audio"}
+    except Exception as e:
+        print("Transcription Error:", e)
+        return {"error": str(e)}
+    finally:
+        if os.path.exists(tmp_wav_path):
+            os.remove(tmp_wav_path)
+
+# Important: Mounting at root must be the last step to not interfere with API routes
+app.mount("/", StaticFiles(directory=str(_frontend_dir), html=True), name="frontend")

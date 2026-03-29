@@ -28,5 +28,11 @@
         "answer": " For the germination stage of a rice crop, the optimal soil moisture level is around 60-80%. However, the exact amount of water needed can vary depending on factors such as soil type, temperature, and weather conditions. It's recommended to maintain a consistent moisture level and avoid both waterlogging and drought.\n\nFor the next steps, you should regularly check the soil moisture level by using a soil moisture meter or simply feeling the soil depth (about 5 cm) with your fingers. Adjust your watering schedule as needed to keep the soil at the optimal moisture level for rice germination.",
         "context": "Tomato (Tomato): stage=germination, logs=7",
         "lang": "en"
+    },
+    {
+        "question": "what is the best soil type for tomato plants",
+        "answer": " For optimal growth of tomato plants during the germination stage, it's best to use well-draining loamy soil with a slightly acidic pH between 6.0 and 6.8. Enriching the soil with compost can improve its texture and nutrient content, promoting healthy root development and tomato growth. Make sure the soil is loose and free of large stones or debris. If you are unsure about your soil type, consider getting a soil test kit to determine its pH and nutrient levels. Next steps would be:\n\n1. Prepare the planting area by loosening the soil and removing any rocks or debris.\n2. Amend the soil with organic matter such as compost, aged manure, or peat moss to improve texture and nutrient content.\n3. Test the soil pH level if necessary, aiming for a range between 6.0 and 6.8.\n4. Plant tomato seeds about 1/2 inch deep and water gently but consistently.\n5. Keep the area well-drained to prevent waterlogging and root rot.",
+        "context": "Tomato (Tomato): stage=germination, logs=9",
+        "lang": "en"
     }
 ]
